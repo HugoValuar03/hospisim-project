@@ -1,0 +1,31 @@
+﻿# Visual Studio / Rider
+.vs/
+*.suo
+*.user
+*.pdb
+*.obj
+*.log
+*.ncb
+*.aps
+*.bsc
+*.sbr
+*.scc
+*.vspscc
+*.vssscc
+*.buildscc
+*.bak
+*.vsk
+*.cache
+*.dbmdl
+*.tlog
+*.vsctmp
+*.pidb
+*.vc.opendb
+*.safetensors
+
+# Binaries
+[Dd]ebug/
+[Rr]elease/
+[Bb]in/
+[Oo]bj/
+[Oo]ut/
