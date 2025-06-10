@@ -1,0 +1,74 @@
+﻿@model Hospisim.Models.ProfissionalSaude
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>ProfissionalSaude</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="NomeCompleto" class="control-label"></label>
+                <input asp-for="NomeCompleto" class="form-control" />
+                <span asp-validation-for="NomeCompleto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Cpf" class="control-label"></label>
+                <input asp-for="Cpf" class="form-control" />
+                <span asp-validation-for="Cpf" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Telefone" class="control-label"></label>
+                <input asp-for="Telefone" class="form-control" />
+                <span asp-validation-for="Telefone" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RegistroConselho" class="control-label"></label>
+                <input asp-for="RegistroConselho" class="form-control" />
+                <span asp-validation-for="RegistroConselho" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="TipoRegistro" class="control-label"></label>
+                <input asp-for="TipoRegistro" class="form-control" />
+                <span asp-validation-for="TipoRegistro" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DataAdmissao" class="control-label"></label>
+                <input asp-for="DataAdmissao" class="form-control" />
+                <span asp-validation-for="DataAdmissao" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CargaHorarioSemanal" class="control-label"></label>
+                <input asp-for="CargaHorarioSemanal" class="form-control" />
+                <span asp-validation-for="CargaHorarioSemanal" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Turno" class="control-label"></label>
+                <input asp-for="Turno" class="form-control" />
+                <span asp-validation-for="Turno" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="Ativo" /> @Html.DisplayNameFor(model => model.Ativo)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
