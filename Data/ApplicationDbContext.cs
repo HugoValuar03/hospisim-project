@@ -23,17 +23,19 @@ namespace Hospisim.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
             modelBuilder.Entity<ProfissionalSaudeEspecialidade>()
                 .HasKey(pse => new { pse.ProfissionalSaudeId, pse.EspecialidadeId });
 
             modelBuilder.Entity<Atendimento>()
-                .HasOne(a => a.Paciente) 
-                .WithMany(p => p.Atendimentos) 
+                .HasOne(a => a.Paciente)
+                .WithMany(p => p.Atendimentos)
                 .HasForeignKey(a => a.PacienteId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Atendimento>()
-                .HasOne(a => a.Prontuario)    
+                .HasOne(a => a.Prontuario)
                 .WithMany(p => p.Atendimentos)
                 .HasForeignKey(a => a.ProntuarioId)
                 .OnDelete(DeleteBehavior.Restrict);
@@ -47,15 +49,14 @@ namespace Hospisim.Data
             modelBuilder.Entity<Internacao>()
                 .HasOne(i => i.Atendimento)
                 .WithOne(a => a.Internacao)
-                .HasForeignKey<Internacao>(i => i.AtendimentoId);
+                .HasForeignKey<Internacao>(i => i.AtendimentoId)
+                .HasPrincipalKey<Atendimento>(a => a.Id);
 
             modelBuilder.Entity<AltaHospitalar>()
                 .HasOne(ah => ah.Internacao)
                 .WithOne(i => i.AltaHospitalar)
                 .HasForeignKey<AltaHospitalar>(ah => ah.InternacaoId)
                 .OnDelete(DeleteBehavior.Cascade);
-
-            base.OnModelCreating(modelBuilder); 
         }
     }
 }

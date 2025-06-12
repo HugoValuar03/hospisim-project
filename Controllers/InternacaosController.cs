@@ -29,37 +29,26 @@ namespace Hospisim.Controllers
         // GET: Internacaos/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
             var internacao = await _context.Internacoes
                 .Include(i => i.Atendimento)
                 .Include(i => i.Paciente)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (internacao == null)
-            {
-                return NotFound();
-            }
-
+            if (internacao == null) return NotFound();
             return View(internacao);
         }
 
         // GET: Internacaos/Create
         public IActionResult Create()
         {
-            ViewData["AtendimentoId"] = new SelectList(_context.Atendimentos, "Id", "Id");
-            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Id", "Cpf");
+            PopulateDropdowns();
             return View();
         }
 
         // POST: Internacaos/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,PacienteId,AtendimentoId,DataEntrada,PrevisaoAlta,MotivoInternacao,Leito,Quarto,Setor,PlanoSaudeAtualiziado,ObservacoesClinicas,StatusIternacao")] Internacao internacao)
+        public async Task<IActionResult> Create([Bind("Id,PacienteId,AtendimentoId,DataEntrada,PrevisaoAlta,MotivoInternacao,Leito,Quarto,Setor,PlanoSaudeUtilizado,ObservacoesClinicas,StatusInternacao")] Internacao internacao)
         {
             if (ModelState.IsValid)
             {
@@ -68,40 +57,26 @@ namespace Hospisim.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AtendimentoId"] = new SelectList(_context.Atendimentos, "Id", "Id", internacao.AtendimentoId);
-            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Id", "Cpf", internacao.PacienteId);
+            PopulateDropdowns(internacao.PacienteId, internacao.AtendimentoId);
             return View(internacao);
         }
 
         // GET: Internacaos/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
             var internacao = await _context.Internacoes.FindAsync(id);
-            if (internacao == null)
-            {
-                return NotFound();
-            }
-            ViewData["AtendimentoId"] = new SelectList(_context.Atendimentos, "Id", "Id", internacao.AtendimentoId);
-            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Id", "Cpf", internacao.PacienteId);
+            if (internacao == null) return NotFound();
+            PopulateDropdowns(internacao.PacienteId, internacao.AtendimentoId);
             return View(internacao);
         }
 
         // POST: Internacaos/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Id,PacienteId,AtendimentoId,DataEntrada,PrevisaoAlta,MotivoInternacao,Leito,Quarto,Setor,PlanoSaudeAtualiziado,ObservacoesClinicas,StatusIternacao")] Internacao internacao)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Id,PacienteId,AtendimentoId,DataEntrada,PrevisaoAlta,MotivoInternacao,Leito,Quarto,Setor,PlanoSaudeUtilizado,ObservacoesClinicas,StatusInternacao")] Internacao internacao)
         {
-            if (id != internacao.Id)
-            {
-                return NotFound();
-            }
+            if (id != internacao.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -112,39 +87,24 @@ namespace Hospisim.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!InternacaoExists(internacao.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!InternacaoExists(internacao.Id)) return NotFound();
+                    else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AtendimentoId"] = new SelectList(_context.Atendimentos, "Id", "Id", internacao.AtendimentoId);
-            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Id", "Cpf", internacao.PacienteId);
+            PopulateDropdowns(internacao.PacienteId, internacao.AtendimentoId);
             return View(internacao);
         }
 
         // GET: Internacaos/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
             var internacao = await _context.Internacoes
                 .Include(i => i.Atendimento)
                 .Include(i => i.Paciente)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (internacao == null)
-            {
-                return NotFound();
-            }
-
+            if (internacao == null) return NotFound();
             return View(internacao);
         }
 
@@ -158,14 +118,36 @@ namespace Hospisim.Controllers
             {
                 _context.Internacoes.Remove(internacao);
             }
-
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        // Método privado para popular os dropdowns, evitando repetição de código
+        private void PopulateDropdowns(object selectedPaciente = null, object selectedAtendimento = null)
+        {
+            var pacientes = _context.Pacientes.OrderBy(p => p.NomeCompleto).ToList();
+            ViewData["PacienteId"] = new SelectList(pacientes, "Id", "NomeCompleto", selectedPaciente);
+
+            var atendimentos = _context.Atendimentos.Include(a => a.Paciente).ToList();
+            var listaAtendimentos = atendimentos.Select(a => new {
+                Value = a.Id,
+                Text = $"ID: {a.Id} (Paciente: {a.Paciente?.NomeCompleto ?? "N/A"})"
+            });
+            ViewData["AtendimentoId"] = new SelectList(listaAtendimentos, "Value", "Text", selectedAtendimento);
         }
 
         private bool InternacaoExists(Guid id)
         {
             return _context.Internacoes.Any(e => e.Id == id);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPacienteDetailsJson(Guid id)
+        {
+            if (id == Guid.Empty) return BadRequest();
+            var paciente = await _context.Pacientes.FindAsync(id);
+            if (paciente == null) return NotFound();
+            return Json(paciente);
         }
     }
 }

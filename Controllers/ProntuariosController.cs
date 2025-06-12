@@ -48,7 +48,7 @@ namespace Hospisim.Controllers
         // GET: Prontuarios/Create
         public IActionResult Create()
         {
-            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Id", "Cpf");
+            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Id", "NomeCompleto"); //
             return View();
         }
 
@@ -57,7 +57,7 @@ namespace Hospisim.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("NumeroProntuario,DataAbertura,ObservacoesGerais,PacienteId")] Prontuario prontuario)
+        public async Task<IActionResult> Create([Bind("DataAbertura,ObservacoesGerais,PacienteId")] Prontuario prontuario)
         {
             if (ModelState.IsValid)
             {
@@ -65,7 +65,7 @@ namespace Hospisim.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Id", "Cpf", prontuario.PacienteId);
+            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Id", "NomeCompleto", prontuario.PacienteId);
             return View(prontuario);
         }
 

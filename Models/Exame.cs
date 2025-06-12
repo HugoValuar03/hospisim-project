@@ -26,6 +26,6 @@ namespace Hospisim.Models
         public int AtendimentoId { get; set; }
         [ForeignKey("AtendimentoId")]
         [DisplayName("Atendimento")]
-        public virtual Atendimento Atendimento { get; set; }
+        public virtual Atendimento? Atendimento { get; set; }
     }
 }

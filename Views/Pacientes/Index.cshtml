@@ -1,89 +1,85 @@
 ﻿@model IEnumerable<Hospisim.Models.Paciente>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Gestão de Pacientes";
 }
 
-<h1>Gestão de pacientes</h1>
+<h1 class="text-center">Gestão de Pacientes</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="btn btn-primary" asp-action="Create">
+        Novo Paciente
+    </a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.NomeCompleto)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cpf)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataNascimento)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Sexo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TipoSanguineo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Telefone)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EnderecoCompleto)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NumeroCartaoSus)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EstadoCivil)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PossuiPlanoSaude)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.NomeCompleto)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cpf)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataNascimento)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Sexo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TipoSanguineo)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Telefone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EnderecoCompleto)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.NumeroCartaoSus)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EstadoCivil)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PossuiPlanoSaude)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="table-responsive">
+    <table class="table table-striped table-hover table-bordered">
+        <thead class="table-dark">
+            <tr class="text-center font-monospace">
+                <th class="justify-content-center">
+                    @Html.DisplayNameFor(model => model.NomeCompleto)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Cpf)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.DataNascimento)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Sexo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.TipoSanguineo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Telefone)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.PossuiPlanoSaude)
+                </th>
+                <th style="width: 210px;">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.NomeCompleto)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Cpf)
+                    </td>
+                    <td>
+                        @* Para formatar a data, podemos usar .ToString("dd/MM/yyyy") *@
+                        @item.DataNascimento.ToString("dd/MM/yyyy")
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Sexo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TipoSanguineo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Telefone)
+                    </td>
+                    <td>
+                        @* Lógica para exibir "Sim" ou "Não" baseado no valor booleano *@
+                        @(item.PossuiPlanoSaude ? "Sim" : "Não")
+                    </td>
+                    <td>
+                        @* Botões de ação com ícones e tooltips para acessibilidade *@
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary btn-sm" title="Editar">
+                            <i class="bi bi-pencil-square">Editar</i>
+                        </a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info btn-sm" title="Detalhes">
+                            <i class="bi bi-search">Detalhes</i>
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm" title="Excluir">
+                            <i class="bi bi-trash3">Excluir</i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

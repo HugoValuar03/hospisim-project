@@ -10,6 +10,7 @@ namespace Hospisim.Models
 {
     public class Paciente
     {
+        [Key]
         public Guid Id { get; set; }
 
         [Required(ErrorMessage = " O Nome do paciente é obrigatório")]

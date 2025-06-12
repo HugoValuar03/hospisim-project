@@ -4,43 +4,50 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Create</h1>
+<h1 class="text-center">Criando Novo Atendimento</h1>
 
-<h4>Atendimento</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
+            <div asp-validation-summary="All" class="text-danger"></div>
+            <div class="form-group mb-3">
                 <label asp-for="DataEHora" class="control-label"></label>
                 <input asp-for="DataEHora" class="form-control" />
                 <span asp-validation-for="DataEHora" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="Tipo" class="control-label"></label>
-                <select asp-for="Tipo" class="form-control"></select>
+                <select asp-for="Tipo" class="form-control" asp-items="Html.GetEnumSelectList<TipoAtendimento>()">
+                    <option value="">-- Selecione o Tipo --</option>
+                </select>
                 <span asp-validation-for="Tipo" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status" class="form-control"></select>
+                <select asp-for="Status" class="form-control" asp-items="Html.GetEnumSelectList<Status>()">
+                    <option value="">-- Selecione o Status --</option>
+                </select>
                 <span asp-validation-for="Status" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="Local" class="control-label"></label>
                 <input asp-for="Local" class="form-control" />
                 <span asp-validation-for="Local" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="PacienteId" class="control-label"></label>
-                <select asp-for="PacienteId" class ="form-control" asp-items="ViewBag.PacienteId"></select>
+                <select asp-for="PacienteId" class="form-control" asp-items="ViewBag.PacienteId">
+                    <option value="">-- Selecione o Paciente --</option>
+                </select>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="ProfissionalSaudeId" class="control-label"></label>
-                <select asp-for="ProfissionalSaudeId" class ="form-control" asp-items="ViewBag.ProfissionalSaudeId"></select>
+                <select asp-for="ProfissionalSaudeId" class ="form-control" asp-items="ViewBag.ProfissionalSaudeId">
+                    <option value="">-- Selecione o Profissional --</option>
+                </select>
             </div>
-            <div class="form-group">
+            <div class="form-group mb-3">
                 <label asp-for="ProntuarioId" class="control-label"></label>
                 <select asp-for="ProntuarioId" class ="form-control" asp-items="ViewBag.ProntuarioId"></select>
             </div>

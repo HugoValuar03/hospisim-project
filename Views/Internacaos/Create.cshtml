@@ -11,14 +11,18 @@
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="PacienteId" class="control-label"></label>
-                <select asp-for="PacienteId" class ="form-control" asp-items="ViewBag.PacienteId"></select>
+                <select asp-for="PacienteId" id="PacienteId" class="form-control" asp-items="ViewBag.PacienteId">
+                    <option value="">-- Selecione o Paciente --</option>
+                </select>
             </div>
             <div class="form-group">
                 <label asp-for="AtendimentoId" class="control-label"></label>
-                <select asp-for="AtendimentoId" class ="form-control" asp-items="ViewBag.AtendimentoId"></select>
+                <select asp-for="AtendimentoId" class ="form-control" asp-items="ViewBag.AtendimentoId">
+                    <option value="">-- Selecione o Atendimento --</option>
+                </select>
             </div>
             <div class="form-group">
                 <label asp-for="DataEntrada" class="control-label"></label>
@@ -48,22 +52,23 @@
             <div class="form-group">
                 <label asp-for="Setor" class="control-label"></label>
                 <input asp-for="Setor" class="form-control" />
-                <span asp-validation-for="Setor" class="text-danger"></span>
-            </div>
+                <span asp-validation-for="Setor" class="text-danger"></span>            </div>
             <div class="form-group">
-                <label asp-for="PlanoSaudeAtualizado" class="control-label"></label>
-                <input asp-for="PlanoSaudeAtualizado" class="form-control" />
-                <span asp-validation-for="PlanoSaudeAtualizado" class="text-danger"></span>
+                <label asp-for="PlanoSaudeUtilizado" class="control-label"></label>
+                <input asp-for="PlanoSaudeUtilizado" class="form-control" />
+                <span asp-validation-for="PlanoSaudeUtilizado" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="ObservacoesClinicas" class="control-label"></label>
                 <input asp-for="ObservacoesClinicas" class="form-control" />
                 <span asp-validation-for="ObservacoesClinicas" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="StatusIternacao" class="control-label"></label>
-                <input asp-for="StatusIternacao" class="form-control" />
-                <span asp-validation-for="StatusIternacao" class="text-danger"></span>
+            <div class="form-group mb-3">
+                <label asp-for="StatusInternacao" class="control-label"></label>
+                <select asp-for="StatusInternacao" class="form-control" asp-items="Html.GetEnumSelectList<StatusInternacao>()">
+                    <option value="">-- Selecione o Status --</option>
+                </select>
+                <span asp-validation-for="StatusInternacao" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
@@ -78,4 +83,38 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const pacienteSelect = document.getElementById('PacienteId');
+
+            const planoSaudeInput = document.getElementById('PlanoSaudeUtilizado');
+            const observacoesInput = document.getElementById('ObservacoesClinicas');
+
+            pacienteSelect.addEventListener('change', function () {
+                const pacienteId = this.value;
+
+                if (!pacienteId) {
+                    planoSaudeInput.value = '';
+                    observacoesInput.value = '';
+                    return;
+                }
+
+                fetch(`/Pacientes/GetPacienteDetailsJson/${pacienteId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        planoSaudeInput.value = data.possuiPlanoSaude ? 'Sim' : 'Não';
+
+                        let obsText = `Paciente com CPF ${data.cpf}, tipo sanguíneo ${data.tipoSanguineo}.`;
+                        observacoesInput.value = obsText;
+
+                    })
+                    .catch(error => {
+                        console.error('Erro ao buscar detalhes do paciente:', error);
+                        planoSaudeInput.value = '';
+                        observacoesInput.value = '';
+                    });
+            });
+        });
+    </script>
 }

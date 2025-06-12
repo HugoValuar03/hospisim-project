@@ -1,53 +1,47 @@
 ﻿@model IEnumerable<Hospisim.Models.AltaHospitalar>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Altas Hospitalares";
 }
 
-<h1>Alta Hospitalar</h1>
+<h1 class="text-center">@ViewData["Title"]</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="btn btn-primary" asp-action="Create">
+        <i class="bi bi-plus-circle"></i> Cadastrar Nova Alta
+    </a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Data)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CondicaoPaciente)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.InstrucoesPosAlta)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Internacao)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Data)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CondicaoPaciente)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.InstrucoesPosAlta)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Internacao.Id)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.InternacaoId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.InternacaoId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.InternacaoId">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover table-bordered">
+        <thead class="table-dark">
+            <tr class="text-center">
+                <th>Paciente</th>
+                <th>Data da Alta</th>
+                <th>Condição do Paciente</th>
+                <th style="width: 210px;">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Internacao.Paciente.NomeCompleto)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Data)</td>
+                    <td>@Html.DisplayFor(modelItem => item.CondicaoPaciente)</td>
+                    <td class="text-center">
+                        <a asp-action="Edit" asp-route-id="@item.InternacaoId" class="btn btn-outline-primary btn-sm" title="Editar">
+                            <i class="bi bi-pencil-square"></i> Editar
+                        </a>
+                        <a asp-action="Details" asp-route-id="@item.InternacaoId" class="btn btn-outline-info btn-sm" title="Detalhes">
+                            <i class="bi bi-search"></i> Detalhes
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.InternacaoId" class="btn btn-outline-danger btn-sm" title="Excluir">
+                            <i class="bi bi-trash3"></i> Excluir
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

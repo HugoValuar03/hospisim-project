@@ -12,6 +12,7 @@ namespace Hospisim.Models
     {
         [Key]
         [DisplayName("Número do Prontuário")]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int NumeroProntuario { get; set; }
 
         [DisplayName("Data da Abertura")]
@@ -23,7 +24,7 @@ namespace Hospisim.Models
         public Guid PacienteId { get; set; }
 
         [ForeignKey("PacienteId")]
-        public virtual Paciente Paciente { get; set; }
+        public virtual Paciente? Paciente { get; set; }
 
         public virtual ICollection<Atendimento> Atendimentos { get; set; }
         public Prontuario()

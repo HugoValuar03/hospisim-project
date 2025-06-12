@@ -5,13 +5,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Web;
 using System.Xml.Linq;
+using System.ComponentModel.DataAnnotations;
 
 namespace Hospisim.Models
 {
     public class Atendimento
     {
+        [Key]
         public int Id { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}", ApplyFormatInEditMode = true)]
         [DisplayName("Data e Hora")]
         public DateTime DataEHora { get; set; }
 
@@ -25,26 +28,25 @@ namespace Hospisim.Models
         public string Local { get; set; }
 
         public Guid PacienteId { get; set; }
-        [ForeignKey("PacienteId")]
-
-        [DisplayName("Paciente")]
-        public virtual Paciente Paciente { get; set; }
-
         public Guid ProfissionalSaudeId { get; set; }
+        public int ProntuarioId { get; set; }
+
+
+        [ForeignKey("PacienteId")]
+        [DisplayName("Paciente")]
+        public virtual Paciente? Paciente { get; set; }
 
         [ForeignKey("ProfissionalSaudeId")]
         [DisplayName("Profissional de Saúde")]
-        public virtual ProfissionalSaude ProfissionalSaude { get; set; }
-
-        public virtual ICollection<Exame> Exames { get; set; }
-        public virtual ICollection<Prescricao> Prescricoes { get; set; }
-
-        public int ProntuarioId { get; set; }
+        public virtual ProfissionalSaude? ProfissionalSaude { get; set; }
 
         [ForeignKey("ProntuarioId")]
         [DisplayName("Prontuário")]
-        public virtual Prontuario Prontuario { get; set; }
-        public virtual Internacao Internacao { get; set; }
+        public virtual Prontuario? Prontuario { get; set; }
+        public virtual Internacao? Internacao { get; set; }
+
+        public virtual ICollection<Exame> Exames { get; set; }
+        public virtual ICollection<Prescricao> Prescricoes { get; set; }
 
         public Atendimento()
         {

@@ -22,7 +22,12 @@ namespace Hospisim.Controllers
         // GET: Atendimentoes
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Atendimentos.Include(a => a.Paciente).Include(a => a.ProfissionalSaude).Include(a => a.Prontuario);
+            var applicationDbContext = _context.Atendimentos.
+                Include(a => a.Paciente)
+                .Include(a => a.ProfissionalSaude)
+                .Include(a => a.Prontuario)
+                .Include(a => a.Paciente);
+
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -50,9 +55,20 @@ namespace Hospisim.Controllers
         // GET: Atendimentoes/Create
         public IActionResult Create()
         {
-            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Id", "Cpf");
-            ViewData["ProfissionalSaudeId"] = new SelectList(_context.ProfissionaisSaude, "Id", "Cpf");
-            ViewData["ProntuarioId"] = new SelectList(_context.Prontuarios, "NumeroProntuario", "NumeroProntuario");
+            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Id", "NomeCompleto");
+            ViewData["ProfissionalSaudeId"] = new SelectList(_context.ProfissionaisSaude, "Id", "NomeCompleto");
+
+            var prontuariosComPaciente = _context.Prontuarios
+                                         .Include(p => p.Paciente)
+                                         .ToList();
+
+            var listaProntuariosParaDropdown = prontuariosComPaciente.Select(p => new
+            {
+                Value = p.NumeroProntuario,
+                Text = $"Nº {p.NumeroProntuario} - {p.Paciente?.NomeCompleto ?? "Paciente não encontrado"}"
+            });
+
+            ViewData["ProntuarioId"] = new SelectList(listaProntuariosParaDropdown, "Value", "Text");
             return View();
         }
 
@@ -69,9 +85,18 @@ namespace Hospisim.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Id", "Cpf", atendimento.PacienteId);
-            ViewData["ProfissionalSaudeId"] = new SelectList(_context.ProfissionaisSaude, "Id", "Cpf", atendimento.ProfissionalSaudeId);
-            ViewData["ProntuarioId"] = new SelectList(_context.Prontuarios, "NumeroProntuario", "NumeroProntuario", atendimento.ProntuarioId);
+
+            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Id", "NomeCompleto", atendimento.PacienteId);
+            ViewData["ProfissionalSaudeId"] = new SelectList(_context.ProfissionaisSaude, "Id", "NomeCompleto", atendimento.ProfissionalSaudeId);
+
+            var prontuariosComPaciente = _context.Prontuarios.Include(p => p.Paciente).ToList();
+            var listaProntuariosParaDropdown = prontuariosComPaciente.Select(p => new
+            {
+                Value = p.NumeroProntuario,
+                Text = $"Nº {p.NumeroProntuario} - {p.Paciente?.NomeCompleto ?? "Paciente Inválido"}"
+            });
+
+            ViewData["ProntuarioId"] = new SelectList(listaProntuariosParaDropdown, "Value", "Text", atendimento.ProntuarioId);
             return View(atendimento);
         }
 

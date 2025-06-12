@@ -11,7 +11,6 @@ namespace Hospisim.Models
     public class AltaHospitalar
     {
         [Key]
-        [ForeignKey("Internacao")]
         public Guid InternacaoId { get; set; }
 
         [DisplayName("Data")]
@@ -24,6 +23,6 @@ namespace Hospisim.Models
         public string InstrucoesPosAlta { get; set; }
 
         [DisplayName("Internação")]
-        public virtual Internacao Internacao { get; set; }
+        public virtual Internacao? Internacao { get; set; }
     }
 }

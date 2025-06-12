@@ -10,17 +10,18 @@ namespace Hospisim.Models
 {
     public class Internacao
     {
+        [Key]
         public Guid Id { get; set; }
 
         public Guid PacienteId { get; set; }
         [ForeignKey("PacienteId")]
         [DisplayName("Paciente")]
-        public virtual Paciente Paciente { get; set; }
+        public virtual Paciente? Paciente { get; set; }
 
         public int AtendimentoId { get; set; }
         [ForeignKey("AtendimentoId")]
         [DisplayName("Atendimento")]
-        public virtual Atendimento Atendimento { get; set; }
+        public virtual Atendimento? Atendimento { get; set; }
 
         [DisplayName("Dt. Entrada")]
         public DateTime DataEntrada { get; set; }
@@ -35,14 +36,15 @@ namespace Hospisim.Models
         public string Setor { get; set; }
 
         [DisplayName("Plano de Saude Atual.")]
-        public string? PlanoSaudeAtualizado { get; set; }
+        public string? PlanoSaudeUtilizado { get; set; }
 
         [DisplayName("Obs. Clínicas")]
         public string ObservacoesClinicas { get; set; }
 
-        [DisplayName("St. de Internação")]
-        public string StatusIternacao { get; set; }
+        [Required(ErrorMessage = "O campo Status da Internação é obrigatório.")]
+        [DisplayName("Stts. da Internação")]
+        public StatusInternacao StatusInternacao { get; set; }
 
-        public virtual AltaHospitalar AltaHospitalar { get; set; }
+        public virtual AltaHospitalar? AltaHospitalar { get; set; }
     }
 }

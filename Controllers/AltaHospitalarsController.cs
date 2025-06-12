@@ -22,33 +22,50 @@ namespace Hospisim.Controllers
         // GET: AltaHospitalars
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.AltasHospitalares.Include(a => a.Internacao);
+            var applicationDbContext = _context.AltasHospitalares
+                .Include(a => a.Internacao)
+                    .ThenInclude(i => i.Paciente);
             return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: AltaHospitalars/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null)
-            {
+            if (id == null) 
                 return NotFound();
-            }
 
             var altaHospitalar = await _context.AltasHospitalares
-                .Include(a => a.Internacao)
+                .Include(a => a.Internacao.Paciente)
                 .FirstOrDefaultAsync(m => m.InternacaoId == id);
-            if (altaHospitalar == null)
-            {
-                return NotFound();
-            }
-
+            if (altaHospitalar == null) return NotFound();
             return View(altaHospitalar);
         }
 
         // GET: AltaHospitalars/Create
         public IActionResult Create()
         {
-            ViewData["InternacaoId"] = new SelectList(_context.Internacoes, "Id", "Id");
+            var internacoes = _context.Internacoes.Include(i => i.Paciente).ToList();
+
+            foreach (var internacao in internacoes)
+            {
+                if (internacao.Paciente == null)
+                {
+                    throw new Exception($"PROBLEMA ENCONTRADO! A Internação com ID '{internacao.Id}' tem um PacienteId ('{internacao.PacienteId}') que não corresponde a nenhum paciente existente no banco de dados. Por favor, corrija ou delete este registro de internação problemático.");
+                }
+
+                if (string.IsNullOrEmpty(internacao.Paciente.NomeCompleto))
+                {
+                    throw new Exception($"PROBLEMA ENCONTRADO! O Paciente com ID '{internacao.Paciente.Id}' (associado à Internação ID '{internacao.Id}') está com o campo NomeCompleto vazio ou nulo no banco de dados. Por favor, preencha o nome deste paciente.");
+                }
+            }
+
+            var listaInternacoes = internacoes.Select(i => new {
+                Value = i.Id,
+                Text = $"Paciente: {i.Paciente?.NomeCompleto} (Entrada: {i.DataEntrada.ToShortDateString()})"
+            });
+
+            ViewData["InternacaoId"] = new SelectList(listaInternacoes, "Value", "Text");
+
             return View();
         }
 
@@ -61,12 +78,12 @@ namespace Hospisim.Controllers
         {
             if (ModelState.IsValid)
             {
-                altaHospitalar.InternacaoId = Guid.NewGuid();
                 _context.Add(altaHospitalar);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["InternacaoId"] = new SelectList(_context.Internacoes, "Id", "Id", altaHospitalar.InternacaoId);
+
+            PopulateDropdowns(altaHospitalar.InternacaoId);
             return View(altaHospitalar);
         }
 
@@ -155,6 +172,21 @@ namespace Hospisim.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        private void PopulateDropdowns(object? selectedInternacao = null)
+        {
+            var internacoes = _context.Internacoes
+                                .Include(i => i.Paciente)
+                                .OrderByDescending(i => i.DataEntrada)
+                                .ToList();
+
+            var listaInternacoes = internacoes.Select(i => new
+            {
+                Value = i.Id,
+                Text = $"Paciente: {i.Paciente?.NomeCompleto} - {i.DataEntrada.ToShortDateString()} ({i.StatusInternacao})"
+            });
+            ViewData["InternacaoId"] = new SelectList(internacoes, "Value", "Text", selectedInternacao);
         }
 
         private bool AltaHospitalarExists(Guid id)

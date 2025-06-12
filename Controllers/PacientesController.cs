@@ -154,5 +154,24 @@ namespace Hospisim.Controllers
         {
             return _context.Pacientes.Any(e => e.Id == id);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetPacienteDetailsJson(Guid id)
+        {
+            if (id == Guid.Empty)
+            {
+                return BadRequest();
+            }
+
+            var paciente = await _context.Pacientes.FindAsync(id);
+
+            if (paciente == null)
+            {
+                return NotFound();
+            }
+
+            // Retorna os dados do paciente em formato JSON
+            return Json(paciente);
+        }
     }
 }

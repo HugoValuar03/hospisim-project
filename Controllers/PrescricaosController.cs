@@ -22,7 +22,10 @@ namespace Hospisim.Controllers
         // GET: Prescricaos
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Prescricoes.Include(p => p.Atendimento).Include(p => p.ProfissionalSaude);
+            var applicationDbContext = _context.Prescricoes
+                .Include(p => p.Atendimento)
+                    .ThenInclude(a => a.Paciente)
+                .Include(p => p.ProfissionalSaude);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -49,8 +52,7 @@ namespace Hospisim.Controllers
         // GET: Prescricaos/Create
         public IActionResult Create()
         {
-            ViewData["AtendimentoId"] = new SelectList(_context.Atendimentos, "Id", "Id");
-            ViewData["ProfissionalSaudeId"] = new SelectList(_context.ProfissionaisSaude, "Id", "Cpf");
+            PopulateDropdowns();
             return View();
         }
 
@@ -68,8 +70,7 @@ namespace Hospisim.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AtendimentoId"] = new SelectList(_context.Atendimentos, "Id", "Id", prescricao.AtendimentoId);
-            ViewData["ProfissionalSaudeId"] = new SelectList(_context.ProfissionaisSaude, "Id", "Cpf", prescricao.ProfissionalSaudeId);
+            PopulateDropdowns(prescricao.AtendimentoId, prescricao.ProfissionalSaudeId);
             return View(prescricao);
         }
 
@@ -161,6 +162,19 @@ namespace Hospisim.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        private void PopulateDropdowns(object? selectedAtendimento = null, object? selectedProfissional = null)
+        {
+            var atendimentos = _context.Atendimentos.Include(a => a.Paciente).OrderByDescending(a => a.DataEHora).ToList();
+            var listaAtendimentos = atendimentos.Select(a => new {
+                Value = a.Id,
+                Text = $"ID: {a.Id} (Paciente: {a.Paciente?.NomeCompleto ?? "N/A"})"
+            });
+            ViewData["AtendimentoId"] = new SelectList(listaAtendimentos, "Value", "Text", selectedAtendimento);
+
+            var profissionais = _context.ProfissionaisSaude.OrderBy(p => p.NomeCompleto).ToList();
+            ViewData["ProfissionalSaudeId"] = new SelectList(profissionais, "Id", "NomeCompleto", selectedProfissional);
         }
 
         private bool PrescricaoExists(Guid id)

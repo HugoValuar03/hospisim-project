@@ -1,83 +1,51 @@
 ﻿@model IEnumerable<Hospisim.Models.ProfissionalSaude>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Profissionais de Saúde";
 }
 
-<h1>Profissional de Saúde</h1>
+<h1 class="text-center">@ViewData["Title"]</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="btn btn-primary" asp-action="Create">
+        <i class="bi bi-plus-circle"></i> Novo Profissional
+    </a>
 </p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.NomeCompleto)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Cpf)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Telefone)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RegistroConselho)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TipoRegistro)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.DataAdmissao)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CargaHorarioSemanal)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Turno)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Ativo)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.NomeCompleto)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Cpf)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Telefone)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RegistroConselho)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TipoRegistro)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DataAdmissao)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CargaHorarioSemanal)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Turno)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Ativo)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+
+<div class="table-responsive">
+    <table class="table table-striped table-hover table-bordered">
+        <thead class="table-dark">
+            <tr class="text-center">
+                <th>Nome Completo</th>
+                <th>CPF</th>
+                <th>Registro do Conselho</th>
+                <th>Turno</th>
+                <th>Ativo</th>
+                <th style="width: 210px;">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.NomeCompleto)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Cpf)</td>
+                    <td>@Html.DisplayFor(modelItem => item.RegistroConselho)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Turno)</td>
+                    <td>@(item.Ativo ? "Sim" : "Não")</td>
+                    <td class="text-center">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline-primary btn-sm" title="Editar">
+                            <i class="bi bi-pencil-square"></i> Editar
+                        </a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-info btn-sm" title="Detalhes">
+                            <i class="bi bi-search"></i> Detalhes
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-outline-danger btn-sm" title="Excluir">
+                            <i class="bi bi-trash3"></i> Excluir
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

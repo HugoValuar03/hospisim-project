@@ -12,12 +12,12 @@ namespace Hospisim.Models
         public Guid Id { get; set; }
         public int AtendimentoId { get; set; }
         [ForeignKey("AtendimentoId")]
-        public virtual Atendimento Atendimento
-        { get; set; }
+        [DisplayName("Atendimento")]
+        public virtual Atendimento? Atendimento { get; set; }
         public Guid ProfissionalSaudeId { get; set; }
         [ForeignKey("ProfissionalSaudeId")]
         [DisplayName("Profis. de Saúde")]
-        public virtual ProfissionalSaude ProfissionalSaude { get; set; }
+        public virtual ProfissionalSaude? ProfissionalSaude { get; set; }
         public string Medicamento { get; set; }
         public string Dosagem { get; set; }
         public string Frequencia { get; set; }

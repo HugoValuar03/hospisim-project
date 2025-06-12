@@ -22,7 +22,8 @@ namespace Hospisim.Controllers
         // GET: Exames
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Exames.Include(e => e.Atendimento);
+            var applicationDbContext = _context.Exames
+                .Include(e => e.Atendimento.Paciente);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -30,17 +31,14 @@ namespace Hospisim.Controllers
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var exame = await _context.Exames
                 .Include(e => e.Atendimento)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (exame == null)
-            {
                 return NotFound();
-            }
 
             return View(exame);
         }
@@ -48,7 +46,7 @@ namespace Hospisim.Controllers
         // GET: Exames/Create
         public IActionResult Create()
         {
-            ViewData["AtendimentoId"] = new SelectList(_context.Atendimentos, "Id", "Id");
+            PopulateDropdown();
             return View();
         }
 
@@ -66,7 +64,7 @@ namespace Hospisim.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AtendimentoId"] = new SelectList(_context.Atendimentos, "Id", "Id", exame.AtendimentoId);
+            PopulateDropdown(exame.AtendimentoId);
             return View(exame);
         }
 
@@ -74,16 +72,14 @@ namespace Hospisim.Controllers
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var exame = await _context.Exames.FindAsync(id);
+
             if (exame == null)
-            {
                 return NotFound();
-            }
-            ViewData["AtendimentoId"] = new SelectList(_context.Atendimentos, "Id", "Id", exame.AtendimentoId);
+
+            PopulateDropdown(exame.AtendimentoId);
             return View(exame);
         }
 
@@ -108,18 +104,12 @@ namespace Hospisim.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ExameExists(exame.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!ExameExists(exame.Id)) return NotFound();
+                    else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AtendimentoId"] = new SelectList(_context.Atendimentos, "Id", "Id", exame.AtendimentoId);
+            PopulateDropdown(exame.AtendimentoId);
             return View(exame);
         }
 
@@ -155,6 +145,19 @@ namespace Hospisim.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        private void PopulateDropdown(object? selectedAtendimento = null)
+        {
+            var atendimentos = _context.Atendimentos
+                                       .Include(a => a.Paciente)
+                                       .OrderByDescending(a => a.DataEHora)
+                                       .ToList();
+            var listaAtendimentos = atendimentos.Select(a => new {
+                Value = a.Id,
+                Text = $"ID: {a.Id} (Paciente: {a.Paciente?.NomeCompleto ?? "N/A"})"
+            });
+            ViewData["AtendimentoId"] = new SelectList(listaAtendimentos, "Value", "Text", selectedAtendimento);
         }
 
         private bool ExameExists(Guid id)

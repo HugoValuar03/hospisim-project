@@ -4,6 +4,7 @@ using Hospisim.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hospisim.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250611210136_TornarProntuarioKeyIdentity")]
+    partial class TornarProntuarioKeyIdentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -158,7 +161,7 @@ namespace Hospisim.Migrations
                     b.Property<Guid>("PacienteId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("PlanoSaudeUtilizado")
+                    b.Property<string>("PlanoSaudeAtualizado")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("PrevisaoAlta")
@@ -172,8 +175,9 @@ namespace Hospisim.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("StatusInternacao")
-                        .HasColumnType("int");
+                    b.Property<string>("StatusIternacao")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -493,7 +497,8 @@ namespace Hospisim.Migrations
                 {
                     b.Navigation("Exames");
 
-                    b.Navigation("Internacao");
+                    b.Navigation("Internacao")
+                        .IsRequired();
 
                     b.Navigation("Prescricoes");
                 });
@@ -505,7 +510,8 @@ namespace Hospisim.Migrations
 
             modelBuilder.Entity("Hospisim.Models.Internacao", b =>
                 {
-                    b.Navigation("AltaHospitalar");
+                    b.Navigation("AltaHospitalar")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Hospisim.Models.Paciente", b =>
