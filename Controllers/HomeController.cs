@@ -1,31 +1,60 @@
-using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
+using Hospisim.Data;
 using Hospisim.Models;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Hospisim.Controllers;
-
-public class HomeController : Controller
+namespace Hospisim.Controllers
 {
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(ILogger<HomeController> logger)
+    public class HomeController : Controller
     {
-        _logger = logger;
-    }
+        // Injetamos o DbContext para acessar o banco de dados
+        private readonly ApplicationDbContext _context;
 
-    public IActionResult Index()
-    {
-        return View();
-    }
+        // O ILogger pode ser mantido ou removido se não for usado.
+        // O ApplicationDbContext é o mais importante aqui.
+        public HomeController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
 
-    public IActionResult Privacy()
-    {
-        return View();
-    }
+        public async Task<IActionResult> Index()
+        {
+            var viewModel = new DashboardViewModel
+            {
+                PacientesInternados = await _context.Internacoes.CountAsync(i => i.StatusInternacao == StatusInternacao.ATIVA),
+                ProfissionaisAtivos = await _context.ProfissionaisSaude.CountAsync(p => p.Ativo),
+                AtendimentosHoje = await _context.Atendimentos.CountAsync(a => a.DataEHora.Date == DateTime.Today),
 
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+                UltimasInternacoes = await _context.Internacoes
+                                            .Include(i => i.Paciente)
+                                            .OrderByDescending(i => i.DataEntrada)
+                                            .Take(5)
+                                            .ToListAsync(),
+
+                UltimasAltas = await _context.AltasHospitalares
+                                        .Include(a => a.Internacao.Paciente)
+                                        .OrderByDescending(a => a.Data)
+                                        .Take(5)
+                                        .ToListAsync()
+            };
+
+            viewModel.LeitosOcupados = viewModel.PacientesInternados;
+
+            return View(viewModel);
+        }
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
+        {
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
     }
 }

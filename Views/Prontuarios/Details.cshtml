@@ -1,36 +1,33 @@
 ﻿@model Hospisim.Models.Prontuario
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalhes do Prontuário";
 }
 
-<h1>Details</h1>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h1 class="text-center">@ViewData["Title"]</h1>
+        <hr />
 
-<div>
-    <h4>Prontuario</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataAbertura)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataAbertura)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ObservacoesGerais)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ObservacoesGerais)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Paciente)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Paciente.Cpf)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.NumeroProntuario">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Prontuário Nº: @Model.NumeroProntuario</h4>
+                <p class="mb-0">Paciente: @Model.Paciente?.NomeCompleto</p>
+            </div>
+            <div class="card-body">
+                <p><strong>Data de Abertura:</strong> @Model.DataAbertura.ToString("f")</p>
+                <hr>
+                <h5>Observações Gerais</h5>
+                <blockquote class="blockquote-footer bg-light p-3 rounded">
+                    @(string.IsNullOrEmpty(Model.ObservacoesGerais) ? "Nenhuma observação geral registrada." : Model.ObservacoesGerais)
+                </blockquote>
+            </div>
+            <div class="card-footer text-end">
+                <a asp-action="Edit" asp-route-id="@Model.NumeroProntuario" class="btn btn-primary">
+                    <i class="bi bi-pencil-square"></i> Editar
+                </a>
+                <a asp-action="Index" class="btn btn-secondary">Voltar para a Lista</a>
+            </div>
+        </div>
+    </div>
 </div>

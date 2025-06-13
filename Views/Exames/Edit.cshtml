@@ -1,54 +1,59 @@
 ﻿@model Hospisim.Models.Exame
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar Exame";
 }
 
-<h1>Edit</h1>
-
-<h4>Exame</h4>
+<h1 class="text-center">@ViewData["Title"]</h1>
 <hr />
-<div class="row">
-    <div class="col-md-4">
+<div class="row justify-content-center">
+    <div class="col-md-8">
         <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="All" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
-            <div class="form-group">
+
+            <div class="form-group mb-3">
+                <label asp-for="AtendimentoId" class="control-label">Atendimento</label>
+                <select asp-for="AtendimentoId" class="form-control" asp-items="ViewBag.AtendimentoId"></select>
+                <span asp-validation-for="AtendimentoId" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
                 <label asp-for="TipoExame" class="control-label"></label>
                 <input asp-for="TipoExame" class="form-control" />
                 <span asp-validation-for="TipoExame" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="DataSolicitacao" class="control-label"></label>
-                <input asp-for="DataSolicitacao" class="form-control" />
-                <span asp-validation-for="DataSolicitacao" class="text-danger"></span>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="DataSolicitacao" class="control-label"></label>
+                    <input asp-for="DataSolicitacao" type="date" class="form-control" />
+                    <span asp-validation-for="DataSolicitacao" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="DataRealizacao" class="control-label"></label>
+                    <input asp-for="DataRealizacao" type="date" class="form-control" />
+                    <span asp-validation-for="DataRealizacao" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="DataRealizacao" class="control-label"></label>
-                <input asp-for="DataRealizacao" class="form-control" />
-                <span asp-validation-for="DataRealizacao" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="Resultado" class="control-label"></label>
-                <input asp-for="Resultado" class="form-control" />
+                <textarea asp-for="Resultado" class="form-control" rows="4"></textarea>
                 <span asp-validation-for="Resultado" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="AtendimentoId" class="control-label"></label>
-                <select asp-for="AtendimentoId" class="form-control" asp-items="ViewBag.AtendimentoId"></select>
-                <span asp-validation-for="AtendimentoId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+
+            <hr />
+            <div class="d-flex gap-3">
+                <input type="submit" value="Salvar" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Voltar para a Lista</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

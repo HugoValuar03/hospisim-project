@@ -20,52 +20,42 @@ namespace Hospisim.Controllers
         }
 
         // GET: AltaHospitalars
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            var applicationDbContext = _context.AltasHospitalares
-                .Include(a => a.Internacao)
-                    .ThenInclude(i => i.Paciente);
-            return View(await applicationDbContext.ToListAsync());
+            ViewData["CurrentFilter"] = searchString;
+
+            var altas = _context.AltasHospitalares
+                .Include(a => a.Internacao.Paciente)
+                .AsQueryable();
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                altas = altas.Where(a => a.Internacao.Paciente.NomeCompleto.Contains(searchString));
+            }
+
+            return View(await altas.OrderByDescending(a => a.Data).ToListAsync());
         }
 
         // GET: AltaHospitalars/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null) 
-                return NotFound();
+            if (id == null) return NotFound();
 
+            // Adicionado .ThenInclude() para carregar os dados do Paciente
             var altaHospitalar = await _context.AltasHospitalares
-                .Include(a => a.Internacao.Paciente)
+                .Include(a => a.Internacao)
+                    .ThenInclude(i => i.Paciente)
                 .FirstOrDefaultAsync(m => m.InternacaoId == id);
+
             if (altaHospitalar == null) return NotFound();
+
             return View(altaHospitalar);
         }
 
         // GET: AltaHospitalars/Create
         public IActionResult Create()
         {
-            var internacoes = _context.Internacoes.Include(i => i.Paciente).ToList();
-
-            foreach (var internacao in internacoes)
-            {
-                if (internacao.Paciente == null)
-                {
-                    throw new Exception($"PROBLEMA ENCONTRADO! A Internação com ID '{internacao.Id}' tem um PacienteId ('{internacao.PacienteId}') que não corresponde a nenhum paciente existente no banco de dados. Por favor, corrija ou delete este registro de internação problemático.");
-                }
-
-                if (string.IsNullOrEmpty(internacao.Paciente.NomeCompleto))
-                {
-                    throw new Exception($"PROBLEMA ENCONTRADO! O Paciente com ID '{internacao.Paciente.Id}' (associado à Internação ID '{internacao.Id}') está com o campo NomeCompleto vazio ou nulo no banco de dados. Por favor, preencha o nome deste paciente.");
-                }
-            }
-
-            var listaInternacoes = internacoes.Select(i => new {
-                Value = i.Id,
-                Text = $"Paciente: {i.Paciente?.NomeCompleto} (Entrada: {i.DataEntrada.ToShortDateString()})"
-            });
-
-            ViewData["InternacaoId"] = new SelectList(listaInternacoes, "Value", "Text");
-
+            PopulateDropdowns();
             return View();
         }
 
@@ -90,17 +80,11 @@ namespace Hospisim.Controllers
         // GET: AltaHospitalars/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
             var altaHospitalar = await _context.AltasHospitalares.FindAsync(id);
-            if (altaHospitalar == null)
-            {
-                return NotFound();
-            }
-            ViewData["InternacaoId"] = new SelectList(_context.Internacoes, "Id", "Id", altaHospitalar.InternacaoId);
+            if (altaHospitalar == null) return NotFound();
+
+            PopulateDropdowns(altaHospitalar.InternacaoId);
             return View(altaHospitalar);
         }
 
@@ -111,10 +95,7 @@ namespace Hospisim.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("InternacaoId,Data,CondicaoPaciente,InstrucoesPosAlta")] AltaHospitalar altaHospitalar)
         {
-            if (id != altaHospitalar.InternacaoId)
-            {
-                return NotFound();
-            }
+            if (id != altaHospitalar.InternacaoId) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -125,32 +106,26 @@ namespace Hospisim.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!AltaHospitalarExists(altaHospitalar.InternacaoId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!AltaHospitalarExists(altaHospitalar.InternacaoId)) return NotFound();
+                    else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["InternacaoId"] = new SelectList(_context.Internacoes, "Id", "Id", altaHospitalar.InternacaoId);
+            PopulateDropdowns(altaHospitalar.InternacaoId);
             return View(altaHospitalar);
         }
 
         // GET: AltaHospitalars/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
+            // Adicionado .ThenInclude() para carregar os dados do Paciente
             var altaHospitalar = await _context.AltasHospitalares
                 .Include(a => a.Internacao)
+                    .ThenInclude(i => i.Paciente)
                 .FirstOrDefaultAsync(m => m.InternacaoId == id);
+
             if (altaHospitalar == null)
             {
                 return NotFound();
@@ -177,16 +152,18 @@ namespace Hospisim.Controllers
         private void PopulateDropdowns(object? selectedInternacao = null)
         {
             var internacoes = _context.Internacoes
-                                .Include(i => i.Paciente)
-                                .OrderByDescending(i => i.DataEntrada)
-                                .ToList();
+                                      .Where(i => i.AltaHospitalar == null) // Pega internações que não tem alta
+                                      .Where(i => i.StatusInternacao == StatusInternacao.ALTA_CONCEDIDA) // E tem que ter o status "Alta Concedida"
+                                      .Include(i => i.Paciente)
+                                      .OrderByDescending(i => i.DataEntrada)
+                                      .ToList();
 
-            var listaInternacoes = internacoes.Select(i => new
-            {
+            var listaInternacoes = internacoes.Select(i => new {
                 Value = i.Id,
-                Text = $"Paciente: {i.Paciente?.NomeCompleto} - {i.DataEntrada.ToShortDateString()} ({i.StatusInternacao})"
+                Text = $"Paciente: {i.Paciente?.NomeCompleto ?? "N/A"} (Entrada: {i.DataEntrada.ToShortDateString()})"
             });
-            ViewData["InternacaoId"] = new SelectList(internacoes, "Value", "Text", selectedInternacao);
+
+            ViewData["InternacaoId"] = new SelectList(listaInternacoes, "Value", "Text", selectedInternacao);
         }
 
         private bool AltaHospitalarExists(Guid id)

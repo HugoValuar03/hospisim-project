@@ -1,42 +1,48 @@
 ﻿@model Hospisim.Models.AltaHospitalar
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalhes da Alta Hospitalar";
 }
 
-<h1>Details</h1>
+<div class="row justify-content-center">
+    <div class="col-md-10">
 
-<div>
-    <h4>AltaHospitalar</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Data)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Data)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CondicaoPaciente)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CondicaoPaciente)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.InstrucoesPosAlta)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.InstrucoesPosAlta)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Internacao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Internacao.Id)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.InternacaoId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+        <h1 class="text-center">@ViewData["Title"]</h1>
+        <hr />
+
+        <div class="card shadow-sm">
+            @if (Model.Internacao?.Paciente != null)
+            {
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Paciente: @Model.Internacao.Paciente.NomeCompleto</h4>
+                    <p class="mb-0">CPF: @Model.Internacao.Paciente.Cpf</p>
+                </div>
+            }
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p><strong>Data da Alta:</strong> @Model.Data.ToString("g")</p>
+                        <p><strong>Condição na Alta:</strong> @Model.CondicaoPaciente</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Instruções Pós-Alta:</strong> @Model.InstrucoesPosAlta</p>
+                        <p>
+                            <strong>Internação de Origem:</strong>
+                            @if (Model.Internacao != null)
+                            {
+                                @($"Entrada em {Model.Internacao.DataEntrada.ToShortDateString()} - Motivo: {Model.Internacao.MotivoInternacao}")
+                            }
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer text-end">
+                <a asp-action="Edit" asp-route-id="@Model.InternacaoId" class="btn btn-primary">
+                    <i class="bi bi-pencil-square"></i> Editar
+                </a>
+                <a asp-action="Index" class="btn btn-secondary">Voltar para a Lista</a>
+            </div>
+        </div>
+
+    </div>
 </div>

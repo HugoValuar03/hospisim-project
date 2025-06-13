@@ -20,9 +20,21 @@ namespace Hospisim.Controllers
         }
 
         // GET: ProfissionalSaudes
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            return View(await _context.ProfissionaisSaude.ToListAsync());
+            ViewData["CurrentFilter"] = searchString;
+
+            var profissionais = from p in _context.ProfissionaisSaude
+                                select p;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                profissionais = profissionais.Where(p => p.NomeCompleto.Contains(searchString)
+                                                    || p.Cpf.Contains(searchString)
+                                                    || p.RegistroConselho.Contains(searchString));
+            }
+
+            return View(await profissionais.OrderBy(p => p.NomeCompleto).ToListAsync());
         }
 
         // GET: ProfissionalSaudes/Details/5

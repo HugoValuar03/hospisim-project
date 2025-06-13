@@ -21,24 +21,24 @@
                         </select>
                         <span asp-validation-for="InternacaoId" class="text-danger"></span>
                     </div>
-
+                </div>
+                <div class="row">
                     <div class="col-md-6 mb-3">
                         <label asp-for="Data" class="control-label"></label>
                         <input asp-for="Data" class="form-control" />
                         <span asp-validation-for="Data" class="text-danger"></span>
                     </div>
-                </div>
-                <div class="row">
                     <div class="col-md-6 mb-3">
                         <label asp-for="CondicaoPaciente" class="control-label"></label>
                         <input asp-for="CondicaoPaciente" class="form-control" />
                         <span asp-validation-for="CondicaoPaciente" class="text-danger"></span>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label asp-for="InstrucoesPosAlta" class="control-label"></label>
-                        <input asp-for="InstrucoesPosAlta" class="form-control" />
-                        <span asp-validation-for="InstrucoesPosAlta" class="text-danger"></span>
-                    </div>
+                </div>
+
+                <div class="col-md-12 mb-3">
+                    <label asp-for="InstrucoesPosAlta" class="control-label"></label>
+                    <textarea asp-for="InstrucoesPosAlta" id="InstrucoesPosAlta" class="form-control" rows="3"></textarea>
+                    <span asp-validation-for="InstrucoesPosAlta" class="text-danger"></span>
                 </div>
 
                 <div class="d-flex gap-3 mt-3">

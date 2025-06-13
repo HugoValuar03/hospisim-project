@@ -110,14 +110,13 @@ namespace Hospisim.Migrations
                     b.Property<int>("AtendimentoId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("DataRealizacao")
+                    b.Property<DateTime?>("DataRealizacao")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime>("DataSolicitacao")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Resultado")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TipoExame")

@@ -1,67 +1,85 @@
 ﻿@model Hospisim.Models.Atendimento
+@using Hospisim.Models
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Criar Novo Atendimento";
 }
 
-<h1 class="text-center">Criando Novo Atendimento</h1>
-
+<h1 class="text-center">@ViewData["Title"]</h1>
 <hr />
-<div class="row">
-    <div class="col-md-4">
+
+<div class="row justify-content-center">
+    <div class="col-md-10">
         <form asp-action="Create">
             <div asp-validation-summary="All" class="text-danger"></div>
-            <div class="form-group mb-3">
-                <label asp-for="DataEHora" class="control-label"></label>
-                <input asp-for="DataEHora" class="form-control" />
-                <span asp-validation-for="DataEHora" class="text-danger"></span>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="PacienteId" class="control-label">Paciente</label>
+                    <select asp-for="PacienteId" class="form-control" asp-items="ViewBag.PacienteId">
+                        <option value="">-- Selecione o Paciente --</option>
+                    </select>
+                    <span asp-validation-for="PacienteId" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="ProfissionalSaudeId" class="control-label">Profissional de Saúde</label>
+                    <select asp-for="ProfissionalSaudeId" class="form-control" asp-items="ViewBag.ProfissionalSaudeId">
+                        <option value="">-- Selecione o Profissional --</option>
+                    </select>
+                    <span asp-validation-for="ProfissionalSaudeId" class="text-danger"></span>
+                </div>
             </div>
+
             <div class="form-group mb-3">
-                <label asp-for="Tipo" class="control-label"></label>
-                <select asp-for="Tipo" class="form-control" asp-items="Html.GetEnumSelectList<TipoAtendimento>()">
-                    <option value="">-- Selecione o Tipo --</option>
+                <label asp-for="ProntuarioId" class="control-label">Prontuário</label>
+                <select asp-for="ProntuarioId" class="form-control" asp-items="ViewBag.ProntuarioId">
+                    <option value="">-- Selecione o Prontuário --</option>
                 </select>
-                <span asp-validation-for="Tipo" class="text-danger"></span>
+                <span asp-validation-for="ProntuarioId" class="text-danger"></span>
             </div>
-            <div class="form-group mb-3">
-                <label asp-for="Status" class="control-label"></label>
-                <select asp-for="Status" class="form-control" asp-items="Html.GetEnumSelectList<Status>()">
-                    <option value="">-- Selecione o Status --</option>
-                </select>
-                <span asp-validation-for="Status" class="text-danger"></span>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="DataEHora" class="control-label"></label>
+                    <input asp-for="DataEHora" class="form-control" />
+                    <span asp-validation-for="DataEHora" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Local" class="control-label"></label>
+                    <input asp-for="Local" class="form-control" />
+                    <span asp-validation-for="Local" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group mb-3">
-                <label asp-for="Local" class="control-label"></label>
-                <input asp-for="Local" class="form-control" />
-                <span asp-validation-for="Local" class="text-danger"></span>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Tipo" class="control-label"></label>
+                    <select asp-for="Tipo" class="form-control" asp-items="Html.GetEnumSelectList<TipoAtendimento>()">
+                        <option value="">-- Selecione o Tipo --</option>
+                    </select>
+                    <span asp-validation-for="Tipo" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Status" class="control-label"></label>
+                    <select asp-for="Status" class="form-control" asp-items="Html.GetEnumSelectList<Status>()">
+                        <option value="">-- Selecione o Status --</option>
+                    </select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group mb-3">
-                <label asp-for="PacienteId" class="control-label"></label>
-                <select asp-for="PacienteId" class="form-control" asp-items="ViewBag.PacienteId">
-                    <option value="">-- Selecione o Paciente --</option>
-                </select>
-            </div>
-            <div class="form-group mb-3">
-                <label asp-for="ProfissionalSaudeId" class="control-label"></label>
-                <select asp-for="ProfissionalSaudeId" class ="form-control" asp-items="ViewBag.ProfissionalSaudeId">
-                    <option value="">-- Selecione o Profissional --</option>
-                </select>
-            </div>
-            <div class="form-group mb-3">
-                <label asp-for="ProntuarioId" class="control-label"></label>
-                <select asp-for="ProntuarioId" class ="form-control" asp-items="ViewBag.ProntuarioId"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+
+            <hr />
+
+            <div class="d-flex gap-3">
+                <input type="submit" value="Criar Atendimento" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Voltar para a Lista</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

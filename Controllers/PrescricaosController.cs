@@ -20,31 +20,35 @@ namespace Hospisim.Controllers
         }
 
         // GET: Prescricaos
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            var applicationDbContext = _context.Prescricoes
-                .Include(p => p.Atendimento)
-                    .ThenInclude(a => a.Paciente)
-                .Include(p => p.ProfissionalSaude);
-            return View(await applicationDbContext.ToListAsync());
+            ViewData["CurrentFilter"] = searchString;
+
+            var prescricoes = _context.Prescricoes
+                .Include(p => p.Atendimento.Paciente)
+                .Include(p => p.ProfissionalSaude)
+                .AsQueryable();
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                prescricoes = prescricoes.Where(p => p.Medicamento.Contains(searchString)
+                                                  || p.Atendimento.Paciente.NomeCompleto.Contains(searchString));
+            }
+
+            return View(await prescricoes.OrderByDescending(p => p.DataInicio).ToListAsync());
         }
 
         // GET: Prescricaos/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var prescricao = await _context.Prescricoes
-                .Include(p => p.Atendimento)
-                .Include(p => p.ProfissionalSaude)
+                .Include(p => p.Atendimento.Paciente) // Inclui o Atendimento e o Paciente dentro dele
+                .Include(p => p.ProfissionalSaude)    // Inclui o Profissional de Saúde
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (prescricao == null)
-            {
-                return NotFound();
-            }
+
+            if (prescricao == null) return NotFound();
 
             return View(prescricao);
         }
@@ -87,8 +91,24 @@ namespace Hospisim.Controllers
             {
                 return NotFound();
             }
-            ViewData["AtendimentoId"] = new SelectList(_context.Atendimentos, "Id", "Id", prescricao.AtendimentoId);
-            ViewData["ProfissionalSaudeId"] = new SelectList(_context.ProfissionaisSaude, "Id", "Cpf", prescricao.ProfissionalSaudeId);
+
+            var atendimentos = _context.Atendimentos
+                           .Include(a => a.Paciente)
+                           .OrderByDescending(a => a.DataEHora)
+                           .ToList();
+
+            // 2. Criamos uma lista com o texto formatado que queremos exibir.
+            var listaAtendimentos = atendimentos.Select(a => new {
+                Value = a.Id,
+                Text = $"ID: {a.Id} (Paciente: {a.Paciente?.NomeCompleto ?? "N/A"})"
+            });
+
+            ViewData["AtendimentoId"] = new SelectList(listaAtendimentos, "Value", "Text", prescricao.AtendimentoId);
+
+
+
+            ViewData["ProfissionalSaudeId"] = new SelectList(_context.ProfissionaisSaude.OrderBy(p => p.NomeCompleto), "Id", "NomeCompleto", prescricao.ProfissionalSaudeId); 
+            
             return View(prescricao);
         }
 
@@ -138,9 +158,10 @@ namespace Hospisim.Controllers
             }
 
             var prescricao = await _context.Prescricoes
-                .Include(p => p.Atendimento)
+                .Include(p => p.Atendimento.Paciente)
                 .Include(p => p.ProfissionalSaude)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (prescricao == null)
             {
                 return NotFound();

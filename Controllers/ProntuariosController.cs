@@ -20,10 +20,22 @@ namespace Hospisim.Controllers
         }
 
         // GET: Prontuarios
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            var applicationDbContext = _context.Prontuarios.Include(p => p.Paciente);
-            return View(await applicationDbContext.ToListAsync());
+            ViewData["CurrentFilter"] = searchString;
+
+            var prontuarios = from p in _context.Prontuarios
+                              .Include(p => p.Paciente)
+                              select p;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                // Filtra pelo nome do paciente ou pelo número do prontuário
+                prontuarios = prontuarios.Where(p => p.Paciente.NomeCompleto.Contains(searchString)
+                                                  || p.NumeroProntuario.ToString().Contains(searchString));
+            }
+
+            return View(await prontuarios.OrderByDescending(p => p.DataAbertura).ToListAsync());
         }
 
         // GET: Prontuarios/Details/5
@@ -48,7 +60,7 @@ namespace Hospisim.Controllers
         // GET: Prontuarios/Create
         public IActionResult Create()
         {
-            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Id", "NomeCompleto"); //
+            PopulateDropdowns();
             return View();
         }
 
@@ -65,7 +77,7 @@ namespace Hospisim.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Id", "NomeCompleto", prontuario.PacienteId);
+            PopulateDropdowns(prontuario.PacienteId);
             return View(prontuario);
         }
 
@@ -82,7 +94,7 @@ namespace Hospisim.Controllers
             {
                 return NotFound();
             }
-            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Id", "Cpf", prontuario.PacienteId);
+            PopulateDropdowns(prontuario.PacienteId);
             return View(prontuario);
         }
 
@@ -118,7 +130,8 @@ namespace Hospisim.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["PacienteId"] = new SelectList(_context.Pacientes, "Id", "Cpf", prontuario.PacienteId);
+            // Em caso de erro, repopula o dropdown da forma correta
+            PopulateDropdowns(prontuario.PacienteId);
             return View(prontuario);
         }
 
@@ -154,6 +167,12 @@ namespace Hospisim.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        private void PopulateDropdowns(object? selectedPaciente = null)
+        {
+            var pacientes = _context.Pacientes.OrderBy(p => p.NomeCompleto).ToList();
+            ViewData["PacienteId"] = new SelectList(pacientes, "Id", "NomeCompleto", selectedPaciente);
         }
 
         private bool ProntuarioExists(int id)

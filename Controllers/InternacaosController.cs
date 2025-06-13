@@ -20,10 +20,21 @@ namespace Hospisim.Controllers
         }
 
         // GET: Internacaos
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            var applicationDbContext = _context.Internacoes.Include(i => i.Atendimento).Include(i => i.Paciente);
-            return View(await applicationDbContext.ToListAsync());
+            ViewData["CurrentFilter"] = searchString;
+
+            var internacoes = _context.Internacoes
+                .Include(i => i.Paciente)
+                .AsQueryable();
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                internacoes = internacoes.Where(i => i.Paciente.NomeCompleto.Contains(searchString)
+                                                   || i.Setor.Contains(searchString));
+            }
+
+            return View(await internacoes.OrderByDescending(i => i.DataEntrada).ToListAsync());
         }
 
         // GET: Internacaos/Details/5

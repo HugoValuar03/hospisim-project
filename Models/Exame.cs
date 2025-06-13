@@ -18,10 +18,10 @@ namespace Hospisim.Models
         public DateTime DataSolicitacao { get; set; }
 
         [DisplayName("Data da Realização")]
-        public DateTime DataRealizacao { get; set; }
+        public DateTime? DataRealizacao { get; set; }
 
         [DisplayName("Resultado")]
-        public string Resultado { get; set; }
+        public string? Resultado { get; set; }
 
         public int AtendimentoId { get; set; }
         [ForeignKey("AtendimentoId")]

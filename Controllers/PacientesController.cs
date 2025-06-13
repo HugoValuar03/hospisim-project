@@ -20,9 +20,20 @@ namespace Hospisim.Controllers
         }
 
         // GET: Pacientes
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            return View(await _context.Pacientes.ToListAsync());
+            ViewData["CurrentFilter"] = searchString;
+
+            var pacientes = from p in _context.Pacientes
+                            select p;
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                pacientes = pacientes.Where(p => p.NomeCompleto.Contains(searchString)
+                                              || p.Cpf.Contains(searchString));
+            }
+
+            return View(await pacientes.OrderBy(p => p.NomeCompleto).ToListAsync());
         }
 
         // GET: Pacientes/Details/5
@@ -143,11 +154,20 @@ namespace Hospisim.Controllers
             var paciente = await _context.Pacientes.FindAsync(id);
             if (paciente != null)
             {
-                _context.Pacientes.Remove(paciente);
+                try
+                {
+                    _context.Pacientes.Remove(paciente);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException)
+                {
+                    ModelState.AddModelError(string.Empty,
+                        "Não é possível excluir este paciente, pois ele já possui atendimentos, prontuários ou outros registros vinculados. Para excluir o paciente, primeiro remova seus vínculos.");
+                }
             }
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return View(paciente);
         }
 
         private bool PacienteExists(Guid id)

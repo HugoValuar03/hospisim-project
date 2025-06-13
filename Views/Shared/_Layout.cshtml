@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -7,50 +11,25 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Hospisim.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Hospisim</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Pacientes" asp-action="Index">Pacientes</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="AltaHospitalars" asp-action="Index">Alta Hospitalar</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Atendimentoes" asp-action="Index">Atendimentos</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Exames" asp-action="Index">Exames</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Internacaos" asp-action="Index">Internacao</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Prescricaos" asp-action="Index">Prescricao</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="ProfissionalSaudes" asp-action="Index">Profissional de Saude</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Prontuarios" asp-action="Index">Prontuario</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+    <header class="py-3 mb-4 border-bottom">
+        <div class="container d-flex flex-wrap align-items-center justify-content-center">
+            <ul class="nav nav-pills">
+                <li class="nav-item"><a asp-controller="Home" asp-action="Index" class="nav-link @(currentController == "Home" ? "active" : "")">Home</a></li>
+                <li class="nav-item"><a asp-controller="Pacientes" asp-action="Index" class="nav-link @(currentController == "Pacientes" ? "active" : "")">Pacientes</a></li>
+                <li class="nav-item"><a asp-controller="AltaHospitalars" asp-action="Index" class="nav-link @(currentController == "AltaHospitalars" ? "active" : "")">Alta Hospitalar</a></li>
+                <li class="nav-item"><a asp-controller="Atendimentoes" asp-action="Index" class="nav-link @(currentController == "Atendimentoes" ? "active" : "")">Atendimentos</a></li>
+                <li class="nav-item"><a asp-controller="Exames" asp-action="Index" class="nav-link @(currentController == "Exames" ? "active" : "")">Exames</a></li>
+                <li class="nav-item"><a asp-controller="Internacaos" asp-action="Index" class="nav-link @(currentController == "Internacaos" ? "active" : "")">Internação</a></li>
+                <li class="nav-item"><a asp-controller="Prescricaos" asp-action="Index" class="nav-link @(currentController == "Prescricaos" ? "active" : "")">Prescrição</a></li>
+                <li class="nav-item"><a asp-controller="ProfissionalSaudes" asp-action="Index" class="nav-link @(currentController == "ProfissionalSaudes" ? "active" : "")">Profissional</a></li>
+                <li class="nav-item"><a asp-controller="Prontuarios" asp-action="Index" class="nav-link @(currentController == "Prontuarios" ? "active" : "")">Prontuário</a></li>
+            </ul>
+        </div>
     </header>
+
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()
@@ -58,8 +37,8 @@
     </div>
 
     <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - Hospisim - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        <div class="container text-center">
+            &copy; 2025 - Hospisim - Hugo Valuar Bailona <a asp-area="" asp-controller="Home" asp-action="Privacy"></a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

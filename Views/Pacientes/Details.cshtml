@@ -1,78 +1,45 @@
 ﻿@model Hospisim.Models.Paciente
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalhes do Paciente";
 }
 
-<h1>Details</h1>
+<div class="row justify-content-center">
+    <div class="col-md-10">
 
-<div>
-    <h4>Paciente</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NomeCompleto)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NomeCompleto)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Cpf)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Cpf)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataNascimento)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataNascimento)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Sexo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Sexo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TipoSanguineo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TipoSanguineo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Telefone)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Telefone)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EnderecoCompleto)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EnderecoCompleto)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NumeroCartaoSus)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NumeroCartaoSus)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EstadoCivil)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EstadoCivil)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.PossuiPlanoSaude)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.PossuiPlanoSaude)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+        <h1 class="text-center">@ViewData["Title"]</h1>
+        <hr />
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">@Model.NomeCompleto</h4>
+                <p class="mb-0">CPF: @Model.Cpf</p>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>Dados Pessoais</h5>
+                        <p><strong>Data de Nascimento:</strong> @Model.DataNascimento.ToString("dd/MM/yyyy")</p>
+                        <p><strong>Sexo:</strong> @Model.Sexo</p>
+                        <p><strong>Tipo Sanguíneo:</strong> @Model.TipoSanguineo</p>
+                        <p><strong>Estado Civil:</strong> @Model.EstadoCivil</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>Contato e Convênio</h5>
+                        <p><strong>Telefone:</strong> @Model.Telefone</p>
+                        <p><strong>Endereço:</strong> @Model.EnderecoCompleto</p>
+                        <p><strong>Nº Cartão SUS:</strong> @Model.NumeroCartaoSus</p>
+                        <p><strong>Possui Plano de Saúde:</strong> @(Model.PossuiPlanoSaude ? "Sim" : "Não")</p>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer text-end">
+                <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">
+                    <i class="bi bi-pencil-square"></i> Editar Paciente
+                </a>
+                <a asp-action="Index" class="btn btn-secondary">Voltar para a Lista</a>
+            </div>
+        </div>
+
+    </div>
 </div>

@@ -1,48 +1,42 @@
 ﻿@model Hospisim.Models.Exame
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Detalhes do Exame";
 }
 
-<h1>Details</h1>
+<div class="row justify-content-center">
+    <div class="col-md-10">
 
-<div>
-    <h4>Exame</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TipoExame)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TipoExame)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataSolicitacao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataSolicitacao)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DataRealizacao)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DataRealizacao)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Resultado)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Resultado)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Atendimento)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Atendimento.Id)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+        <h1 class="text-center">@ViewData["Title"]</h1>
+        <hr />
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Exame: @Model.TipoExame</h4>
+                <p class="mb-0">Paciente: @Model.Atendimento?.Paciente?.NomeCompleto</p>
+            </div>
+            <div class="card-body">
+                <dl class="row">
+                    <dt class="col-sm-4">Data da Solicitação</dt>
+                    <dd class="col-sm-8">@Model.DataSolicitacao.ToString("g")</dd>
+
+                    <dt class="col-sm-4">Data da Realização</dt>
+                    <dd class="col-sm-8">@Model.DataRealizacao.ToString()</dd>
+
+                    <dt class="col-sm-4">Atendimento de Origem</dt>
+                    <dd class="col-sm-8">ID @Model.AtendimentoId - @Model.Atendimento.Paciente.NomeCompleto</dd>
+
+                    <dt class="col-sm-4">Resultado</dt>
+                    <dd class="col-sm-8">@Model.Resultado</dd>
+                </dl>
+            </div>
+            <div class="card-footer text-end">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                    <i class="bi bi-pencil-square"></i> Editar
+                </a>
+                <a asp-action="Index" class="btn btn-secondary">Voltar para a Lista</a>
+            </div>
+        </div>
+
+    </div>
 </div>

@@ -1,8 +1,85 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model Hospisim.Models.DashboardViewModel
+@{
+    ViewData["Title"] = "Painel de Controle";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Bem-vindo ao Hospisim</h1>
+    <p>Seu sistema de gerenciamento hospitalar.</p>
+</div>
+
+<hr />
+
+<div class="row">
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-primary h-100">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-person-check-fill"></i> Pacientes Internados</h5>
+                <p class="card-text fs-2 fw-bold">@Model.PacientesInternados</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-success h-100">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-calendar-check"></i> Atendimentos Hoje</h5>
+                <p class="card-text fs-2 fw-bold">@Model.AtendimentosHoje</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-info h-100">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-person-badge"></i> Profissionais Ativos</h5>
+                <p class="card-text fs-2 fw-bold">@Model.ProfissionaisAtivos</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 mb-4">
+        <div class="card text-white bg-warning h-100">
+            <div class="card-body">
+                <h5 class="card-title"><i class="bi bi-hdd-stack"></i> Leitos Ocupados</h5>
+                <p class="card-text fs-2 fw-bold">@Model.LeitosOcupados</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row text-center my-4">
+    <div class="col">
+        <h4>Acesso Rápido</h4>
+        <div class="d-flex justify-content-center gap-3 flex-wrap">
+            <a asp-controller="Pacientes" asp-action="Create" class="btn btn-lg btn-secondary">Novo Paciente</a>
+            <a asp-controller="Internacaos" asp-action="Create" class="btn btn-lg btn-secondary">Nova Internação</a>
+            <a asp-controller="Atendimentoes" asp-action="Create" class="btn btn-lg btn-secondary">Novo Atendimento</a>
+        </div>
+    </div>
+</div>
+
+<hr />
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <h5><i class="bi bi-box-arrow-in-right"></i> Últimas Internações</h5>
+        <ul class="list-group">
+            @foreach (var internacao in Model.UltimasInternacoes)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span><strong>@internacao.Paciente?.NomeCompleto</strong> - Entrada: @internacao.DataEntrada.ToString("dd/MM/yyyy")</span>
+                    <span class="badge bg-danger">@internacao.Setor</span>
+                </li>
+            }
+        </ul>
+    </div>
+    <div class="col-md-6">
+        <h5><i class="bi bi-box-arrow-left"></i> Últimas Altas</h5>
+        <ul class="list-group">
+            @foreach (var alta in Model.UltimasAltas)
+            {
+                <li class="list-group-item">
+                    <strong>@alta.Internacao?.Paciente?.NomeCompleto</strong> - Alta: @alta.Data.ToString("dd/MM/yyyy")
+                </li>
+            }
+        </ul>
+    </div>
 </div>

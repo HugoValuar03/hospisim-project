@@ -1,82 +1,91 @@
 ﻿@model Hospisim.Models.Prescricao
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Editar Prescrição";
 }
 
-<h1>Edit</h1>
-
-<h4>Prescricao</h4>
+<h1 class="text-center">@ViewData["Title"]</h1>
+<h4 class="text-center text-muted">Paciente: @Model.Atendimento?.Paciente?.NomeCompleto</h4>
 <hr />
-<div class="row">
-    <div class="col-md-4">
+
+<div class="row justify-content-center">
+    <div class="col-md-10">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="AtendimentoId" class="control-label"></label>
-                <select asp-for="AtendimentoId" class="form-control" asp-items="ViewBag.AtendimentoId"></select>
-                <span asp-validation-for="AtendimentoId" class="text-danger"></span>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="AtendimentoId" class="control-label">Atendimento</label>
+                    <select asp-for="AtendimentoId" class="form-control" asp-items="ViewBag.AtendimentoId"></select>
+                    <span asp-validation-for="AtendimentoId" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="ProfissionalSaudeId" class="control-label">Profissional de Saúde</label>
+                    <select asp-for="ProfissionalSaudeId" class="form-control" asp-items="ViewBag.ProfissionalSaudeId"></select>
+                    <span asp-validation-for="ProfissionalSaudeId" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="ProfissionalSaudeId" class="control-label"></label>
-                <select asp-for="ProfissionalSaudeId" class="form-control" asp-items="ViewBag.ProfissionalSaudeId"></select>
-                <span asp-validation-for="ProfissionalSaudeId" class="text-danger"></span>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Medicamento" class="control-label"></label>
+                    <input asp-for="Medicamento" class="form-control" />
+                    <span asp-validation-for="Medicamento" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Dosagem" class="control-label"></label>
+                    <input asp-for="Dosagem" class="form-control" />
+                    <span asp-validation-for="Dosagem" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Medicamento" class="control-label"></label>
-                <input asp-for="Medicamento" class="form-control" />
-                <span asp-validation-for="Medicamento" class="text-danger"></span>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="Frequencia" class="control-label"></label>
+                    <input asp-for="Frequencia" class="form-control" />
+                    <span asp-validation-for="Frequencia" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="ViaAdministracao" class="control-label"></label>
+                    <input asp-for="ViaAdministracao" class="form-control" />
+                    <span asp-validation-for="ViaAdministracao" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Dosagem" class="control-label"></label>
-                <input asp-for="Dosagem" class="form-control" />
-                <span asp-validation-for="Dosagem" class="text-danger"></span>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="DataInicio" class="control-label"></label>
+                    <input asp-for="DataInicio" class="form-control" />
+                    <span asp-validation-for="DataInicio" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="DataFim" class="control-label"></label>
+                    <input asp-for="DataFim" class="form-control" />
+                    <span asp-validation-for="DataFim" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Frequencia" class="control-label"></label>
-                <input asp-for="Frequencia" class="form-control" />
-                <span asp-validation-for="Frequencia" class="text-danger"></span>
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Observacoes" class="control-label"></label>
+                    <input asp-for="Observacoes" class="form-control" />
+                    <span asp-validation-for="Observacoes" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="StatusPrescricao" class="control-label"></label>
+                    <input asp-for="StatusPrescricao" class="form-control" />
+                    <span asp-validation-for="StatusPrescricao" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="ReacoesAdversas" class="control-label"></label>
+                    <input asp-for="ReacoesAdversas" class="form-control" />
+                    <span asp-validation-for="ReacoesAdversas" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="ViaAdministracao" class="control-label"></label>
-                <input asp-for="ViaAdministracao" class="form-control" />
-                <span asp-validation-for="ViaAdministracao" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataInicio" class="control-label"></label>
-                <input asp-for="DataInicio" class="form-control" />
-                <span asp-validation-for="DataInicio" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataFim" class="control-label"></label>
-                <input asp-for="DataFim" class="form-control" />
-                <span asp-validation-for="DataFim" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Observacoes" class="control-label"></label>
-                <input asp-for="Observacoes" class="form-control" />
-                <span asp-validation-for="Observacoes" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="StatusPrescricao" class="control-label"></label>
-                <input asp-for="StatusPrescricao" class="form-control" />
-                <span asp-validation-for="StatusPrescricao" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ReacoesAdversas" class="control-label"></label>
-                <input asp-for="ReacoesAdversas" class="form-control" />
-                <span asp-validation-for="ReacoesAdversas" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+            <div class="d-flex gap-3">
+                <input type="submit" value="Salvar Alteração" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Voltar Para a Lista</a>
             </div>
         </form>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

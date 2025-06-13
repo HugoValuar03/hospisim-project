@@ -1,119 +1,128 @@
 ﻿@model Hospisim.Models.Internacao
+@using Hospisim.Models
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Nova Internação";
 }
 
-<h1>Create</h1>
-
-<h4>Internacao</h4>
+<h1 class="text-center">@ViewData["Title"]</h1>
 <hr />
-<div class="row">
-    <div class="col-md-4">
+
+<div class="row justify-content-center">
+    <div class="col-md-10">
         <form asp-action="Create">
+
             <div asp-validation-summary="All" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="PacienteId" class="control-label"></label>
-                <select asp-for="PacienteId" id="PacienteId" class="form-control" asp-items="ViewBag.PacienteId">
-                    <option value="">-- Selecione o Paciente --</option>
-                </select>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="PacienteId" class="control-label">Paciente</label>
+                    <select asp-for="PacienteId" id="PacienteId" class="form-control" asp-items="ViewBag.PacienteId">
+                        <option value="">-- Selecione o Paciente --</option>
+                    </select>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="AtendimentoId" class="control-label">Atendimento de Origem</label>
+                    <select asp-for="AtendimentoId" class="form-control" asp-items="ViewBag.AtendimentoId">
+                        <option value="">-- Selecione o Atendimento --</option>
+                    </select>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="AtendimentoId" class="control-label"></label>
-                <select asp-for="AtendimentoId" class ="form-control" asp-items="ViewBag.AtendimentoId">
-                    <option value="">-- Selecione o Atendimento --</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label asp-for="DataEntrada" class="control-label"></label>
-                <input asp-for="DataEntrada" class="form-control" />
-                <span asp-validation-for="DataEntrada" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="PrevisaoAlta" class="control-label"></label>
-                <input asp-for="PrevisaoAlta" class="form-control" />
-                <span asp-validation-for="PrevisaoAlta" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="MotivoInternacao" class="control-label"></label>
-                <input asp-for="MotivoInternacao" class="form-control" />
+                <textarea asp-for="MotivoInternacao" class="form-control" rows="3"></textarea>
                 <span asp-validation-for="MotivoInternacao" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="Leito" class="control-label"></label>
-                <input asp-for="Leito" class="form-control" />
-                <span asp-validation-for="Leito" class="text-danger"></span>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="DataEntrada" class="control-label"></label>
+                    <input asp-for="DataEntrada" class="form-control" />
+                    <span asp-validation-for="DataEntrada" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="PrevisaoAlta" class="control-label"></label>
+                    <input asp-for="PrevisaoAlta" class="form-control" />
+                    <span asp-validation-for="PrevisaoAlta" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Quarto" class="control-label"></label>
-                <input asp-for="Quarto" class="form-control" />
-                <span asp-validation-for="Quarto" class="text-danger"></span>
+
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Setor" class="control-label"></label>
+                    <input asp-for="Setor" class="form-control" />
+                    <span asp-validation-for="Setor" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Quarto" class="control-label"></label>
+                    <input asp-for="Quarto" class="form-control" />
+                    <span asp-validation-for="Quarto" class="text-danger"></span>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label asp-for="Leito" class="control-label"></label>
+                    <input asp-for="Leito" class="form-control" />
+                    <span asp-validation-for="Leito" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Setor" class="control-label"></label>
-                <input asp-for="Setor" class="form-control" />
-                <span asp-validation-for="Setor" class="text-danger"></span>            </div>
-            <div class="form-group">
-                <label asp-for="PlanoSaudeUtilizado" class="control-label"></label>
-                <input asp-for="PlanoSaudeUtilizado" class="form-control" />
-                <span asp-validation-for="PlanoSaudeUtilizado" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="ObservacoesClinicas" class="control-label"></label>
-                <input asp-for="ObservacoesClinicas" class="form-control" />
+                <textarea asp-for="ObservacoesClinicas" id="ObservacoesClinicas" class="form-control" rows="3"></textarea>
                 <span asp-validation-for="ObservacoesClinicas" class="text-danger"></span>
             </div>
-            <div class="form-group mb-3">
-                <label asp-for="StatusInternacao" class="control-label"></label>
-                <select asp-for="StatusInternacao" class="form-control" asp-items="Html.GetEnumSelectList<StatusInternacao>()">
-                    <option value="">-- Selecione o Status --</option>
-                </select>
-                <span asp-validation-for="StatusInternacao" class="text-danger"></span>
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label asp-for="StatusInternacao" class="control-label"></label>
+                    <select asp-for="StatusInternacao" class="form-control" asp-items="Html.GetEnumSelectList<StatusInternacao>()">
+                        <option value="">-- Selecione o Status --</option>
+                    </select>
+                    <span asp-validation-for="StatusInternacao" class="text-danger"></span>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label asp-for="PlanoSaudeUtilizado" class="control-label"></label>
+                    <input asp-for="PlanoSaudeUtilizado" id="PlanoSaudeUtilizado" class="form-control" />
+                    <span asp-validation-for="PlanoSaudeUtilizado" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+
+            <hr />
+            <div class="d-flex gap-3">
+                <input type="submit" value="Registrar Internação" class="btn btn-primary" />
+                <a asp-action="Index" class="btn btn-secondary">Voltar para a Lista</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 
     <script>
+        // Script para preenchimento automático
         document.addEventListener('DOMContentLoaded', function () {
             const pacienteSelect = document.getElementById('PacienteId');
-
             const planoSaudeInput = document.getElementById('PlanoSaudeUtilizado');
             const observacoesInput = document.getElementById('ObservacoesClinicas');
 
             pacienteSelect.addEventListener('change', function () {
                 const pacienteId = this.value;
-
                 if (!pacienteId) {
                     planoSaudeInput.value = '';
                     observacoesInput.value = '';
                     return;
                 }
-
                 fetch(`/Pacientes/GetPacienteDetailsJson/${pacienteId}`)
                     .then(response => response.json())
                     .then(data => {
                         planoSaudeInput.value = data.possuiPlanoSaude ? 'Sim' : 'Não';
-
                         let obsText = `Paciente com CPF ${data.cpf}, tipo sanguíneo ${data.tipoSanguineo}.`;
                         observacoesInput.value = obsText;
-
                     })
-                    .catch(error => {
-                        console.error('Erro ao buscar detalhes do paciente:', error);
-                        planoSaudeInput.value = '';
-                        observacoesInput.value = '';
-                    });
+                    .catch(error => console.error('Erro ao buscar detalhes do paciente:', error));
             });
         });
     </script>

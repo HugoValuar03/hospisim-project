@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -20,42 +19,46 @@ namespace Hospisim.Controllers
         }
 
         // GET: Exames
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchString)
         {
-            var applicationDbContext = _context.Exames
-                .Include(e => e.Atendimento.Paciente);
-            return View(await applicationDbContext.ToListAsync());
+            ViewData["CurrentFilter"] = searchString;
+
+            var exames = _context.Exames
+                .Include(e => e.Atendimento.Paciente)
+                .AsQueryable();
+
+            if (!String.IsNullOrEmpty(searchString))
+            {
+                exames = exames.Where(e => e.TipoExame.Contains(searchString)
+                                        || e.Atendimento.Paciente.NomeCompleto.Contains(searchString));
+            }
+
+            return View(await exames.OrderByDescending(e => e.DataSolicitacao).ToListAsync());
         }
 
         // GET: Exames/Details/5
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null)
-                return NotFound();
-
+            if (id == null) return NotFound();
             var exame = await _context.Exames
                 .Include(e => e.Atendimento)
+                    .ThenInclude(e => e.Paciente)
                 .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (exame == null)
-                return NotFound();
-
+            if (exame == null) return NotFound();
             return View(exame);
         }
 
         // GET: Exames/Create
         public IActionResult Create()
         {
-            PopulateDropdown();
+            PopulateDropdowns();
             return View();
         }
 
         // POST: Exames/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,TipoExame,DataSolicitacao,DataRealizacao,Resultado,AtendimentoId")] Exame exame)
+        public async Task<IActionResult> Create([Bind("Id,TipoExame,DataSolicitacao,AtendimentoId")] Exame exame)
         {
             if (ModelState.IsValid)
             {
@@ -64,37 +67,26 @@ namespace Hospisim.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            PopulateDropdown(exame.AtendimentoId);
+            PopulateDropdowns(exame.AtendimentoId);
             return View(exame);
         }
 
         // GET: Exames/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null)
-                return NotFound();
-
+            if (id == null) return NotFound();
             var exame = await _context.Exames.FindAsync(id);
-
-            if (exame == null)
-                return NotFound();
-
-            PopulateDropdown(exame.AtendimentoId);
+            if (exame == null) return NotFound();
+            PopulateDropdowns(exame.AtendimentoId);
             return View(exame);
         }
 
         // POST: Exames/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, [Bind("Id,TipoExame,DataSolicitacao,DataRealizacao,Resultado,AtendimentoId")] Exame exame)
         {
-            if (id != exame.Id)
-            {
-                return NotFound();
-            }
-
+            if (id != exame.Id) return NotFound();
             if (ModelState.IsValid)
             {
                 try
@@ -109,26 +101,18 @@ namespace Hospisim.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            PopulateDropdown(exame.AtendimentoId);
+            PopulateDropdowns(exame.AtendimentoId);
             return View(exame);
         }
 
         // GET: Exames/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
             var exame = await _context.Exames
-                .Include(e => e.Atendimento)
+                .Include(e => e.Atendimento.Paciente)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (exame == null)
-            {
-                return NotFound();
-            }
-
+            if (exame == null) return NotFound();
             return View(exame);
         }
 
@@ -141,13 +125,12 @@ namespace Hospisim.Controllers
             if (exame != null)
             {
                 _context.Exames.Remove(exame);
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private void PopulateDropdown(object? selectedAtendimento = null)
+        private void PopulateDropdowns(object? selectedAtendimento = null)
         {
             var atendimentos = _context.Atendimentos
                                        .Include(a => a.Paciente)
